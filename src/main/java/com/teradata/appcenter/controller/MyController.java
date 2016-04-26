@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.teradata.appcenter.entity.MySchduler;
 import com.teradata.appcenter.entity.MyTaskRequest;
 import com.teradata.appcenter.entity.Task;
+import com.teradata.appcenter.service.MySchduler;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -25,10 +25,10 @@ public class MyController {
 	@RequestMapping(value ={ "/tasks"}, method = RequestMethod.POST)
 	@ApiOperation(value = "Submit a task to scheduler", notes = "Submit a task to scheduler")
 	@ApiResponses(value = {@ApiResponse(code = 201, message = "Successfully created an app")})
-	public @ResponseBody MyTaskRequest submit(@RequestBody Task task ,
+	public @ResponseBody void submit(@RequestBody Task task ,
 			HttpServletResponse response) throws Exception{
 		response.setStatus(HttpServletResponse.SC_CREATED);
-		return schduler.addTaskRequest(task);
+		schduler.addTaskRequest(task);
 	}
 	
 	@RequestMapping(value ={ "/tasks/{task_id}"}, method = RequestMethod.GET)

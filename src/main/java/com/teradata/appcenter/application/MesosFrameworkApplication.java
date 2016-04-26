@@ -4,12 +4,14 @@ import org.hibernate.SessionFactory;
 import org.hibernate.jpa.HibernateEntityManagerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 
 import com.google.common.base.Predicate;
-import com.teradata.appcenter.entity.MyFramework;
+import com.teradata.appcenter.service.MyFramework;
 
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.service.ApiInfo;
@@ -20,6 +22,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableSwagger2
+@ComponentScan(basePackages = {"com.teradata.appcenter"})
+@EntityScan("com.teradata.appcenter.entity")
 public class MesosFrameworkApplication {
 	public static void main(String[] args) {
 		ConfigurableApplicationContext context =  SpringApplication.run(MesosFrameworkApplication.class, args);

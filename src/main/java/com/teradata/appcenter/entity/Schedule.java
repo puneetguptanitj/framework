@@ -1,42 +1,29 @@
 package com.teradata.appcenter.entity;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-import org.apache.mesos.Protos.TaskState;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.netflix.fenzo.ConstraintEvaluator;
-import com.netflix.fenzo.TaskRequest;
-import com.netflix.fenzo.VMTaskFitnessCalculator;
 
 @Entity
-@Table(name = "task")
+@Table(name = "schedule")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_NULL)
-public class MyTaskRequest implements TaskRequest{
+public class Schedule {
 	private double CPUs;
 	private double memory;
 	private String image;	
 	private String id = UUID.randomUUID().toString().replace("-", "");
 	private String stagedTime = Instant.now().toString();
-	private String startTime;
-	private String endTime;
-	private TaskState state;
+	private long   nextExecutionTime;
+	private String cronSchedule;
 	
-	public TaskState getState() {
-		return state;
-	}
-
 	public double getCPUs() {
 		return CPUs;
 	}
@@ -61,24 +48,12 @@ public class MyTaskRequest implements TaskRequest{
 		this.image = image;
 	}
 
-	public void setState(TaskState state) {
-		this.state = state;
-	}
-
-	public String getStartTime() {
-		return startTime;
-	}
-
-	public void setStartTime(String startTime) {
-		this.startTime = startTime;
-	}
-
 	public String getEndTime() {
-		return endTime;
+		return cronSchedule;
 	}
 
 	public void setEndTime(String endTime) {
-		this.endTime = endTime;
+		this.cronSchedule = endTime;
 	}
 
 	public String getStagedTime(){
@@ -89,21 +64,8 @@ public class MyTaskRequest implements TaskRequest{
 		this.stagedTime = stagedTime;
 	}
 
-	@Override
-	@Transient
-	public double getDisk() {
-		return 10;
-	}
-	
-	@Override
-	@Transient
-	@JsonIgnore
-	public List<? extends ConstraintEvaluator> getHardConstraints() {
-		return null;
-	}
 
 	@Id
-	@Override
 	public String getId() {
 		return id;
 	}
@@ -113,35 +75,9 @@ public class MyTaskRequest implements TaskRequest{
 	}
 
 	@Override
-	@Transient
-	@JsonIgnore
-	public double getNetworkMbps() {
-		return 0;
-	}
-
-	@Override
-	@Transient
-	@JsonIgnore
-	public int getPorts() {
-		return 0;
-	}
-
-	@Override
-	@Transient
-	@JsonIgnore
-	public List<? extends VMTaskFitnessCalculator> getSoftConstraints() {
-		return null;
-	}
-
-	@Override
-	public String taskGroupName() {
-		return null;
-	}
-	
-	@Override
 	public boolean equals(Object o){
-		if(o instanceof MyTaskRequest){
-			return getId().equals(((MyTaskRequest) o).getId());
+		if(o instanceof Schedule){
+			return getId().equals(((Schedule) o).getId());
 		}
 		return false;
 	}
@@ -149,6 +85,22 @@ public class MyTaskRequest implements TaskRequest{
 	@Override
 	public int hashCode(){
 		return getId().hashCode();
+	}
+
+	public long getNextExecutionTime() {
+		return nextExecutionTime;
+	}
+
+	public void setNextExecutionTime(long nextExecutionTime) {
+		this.nextExecutionTime = nextExecutionTime;
+	}
+
+	public String getCronSchedule() {
+		return cronSchedule;
+	}
+
+	public void setCronSchedule(String cronSchedule) {
+		this.cronSchedule = cronSchedule;
 	}
 
 }

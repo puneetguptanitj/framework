@@ -1,10 +1,11 @@
-package com.teradata.appcenter.entity;
+package com.teradata.appcenter.service;
 
+import java.sql.Date;
+import java.text.ParseException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.mesos.Protos.CommandInfo;
 import org.apache.mesos.Protos.ContainerInfo;
@@ -24,6 +25,7 @@ import org.apache.mesos.Protos.TaskStatus;
 import org.apache.mesos.Protos.Value;
 import org.apache.mesos.Scheduler;
 import org.apache.mesos.SchedulerDriver;
+import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,31 +38,45 @@ import com.netflix.fenzo.VirtualMachineLease;
 import com.netflix.fenzo.functions.Action1;
 import com.netflix.fenzo.plugins.VMLeaseObject;
 import com.teradata.appcenter.dao.MyTaskRequestDao;
+import com.teradata.appcenter.dao.ScheduleDao;
+import com.teradata.appcenter.entity.MyTaskRequest;
+import com.teradata.appcenter.entity.Schedule;
+import com.teradata.appcenter.entity.Task;
 
 @Component
 public class MySchduler implements Scheduler{
 	Gson gson  = new Gson();
 	private SchedulerDriver driver;
 	private TaskScheduler scheduler;
-	
 	@Autowired
 	private MyTaskRequestDao dao;
+	@Autowired
+	private ScheduleDao scheduleDao;
 	
-	private MyTaskRequest createTaskRequest(final Task task){
+	private void createTaskRequest(final Task task) throws ParseException{
 		//persist task sort of WAL
-		MyTaskRequest request = new MyTaskRequest();
-		request.setCPUs(task.getCpu());
-		request.setImage(task.getImage());
-		request.setMemory(task.getCpu());
-		return request;	
+		if(task.getCron() != null && !task.getCron().isEmpty()){
+			Schedule schedule = new Schedule();
+			schedule.setCPUs(task.getCpu());
+			schedule.setImage(task.getImage());
+			schedule.setMemory(task.getMemory());
+			schedule.setCronSchedule(task.getCron());
+			CronExpression ce = new CronExpression(task.getCron());
+			schedule.setNextExecutionTime(ce.getNextValidTimeAfter(Date.from(Instant.now())).getTime());
+			scheduleDao.saveSchedule(schedule);
+		}else{
+			MyTaskRequest request = new MyTaskRequest();
+			request.setCPUs(task.getCpu());
+			request.setImage(task.getImage());
+			request.setMemory(task.getCpu());
+			dao.saveJob(request);
+		}
 	}
 	
-	public MyTaskRequest  addTaskRequest(Task task){
+	public void  addTaskRequest(Task task) throws ParseException{
 		System.out.println("Controller receives a task request = " +  task.getImage());
-		MyTaskRequest taskRequest = createTaskRequest(task);
-		dao.saveJob(taskRequest);
+		createTaskRequest(task);
 		System.out.println( "Adding task to task list") ;
-		return taskRequest;
 	}
 
 	@Override

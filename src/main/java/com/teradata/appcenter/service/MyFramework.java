@@ -1,4 +1,4 @@
-package com.teradata.appcenter.entity;
+package com.teradata.appcenter.service;
 
 import javax.annotation.PostConstruct;
 

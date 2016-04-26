@@ -4,6 +4,7 @@ public  class Task{
 	private double cpu;
 	private int memory;
 	private String image;
+	private String cron;
 	public double getCpu() {
 		return cpu;
 	}
@@ -22,5 +23,10 @@ public  class Task{
 	public void setImage(String image) {
 		this.image = image;
 	}
-
+	public String getCron() {
+		return cron;
+	}
+	public void setCron(String cron) {
+		this.cron = cron;
+	}
 }
