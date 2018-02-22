@@ -26,9 +26,14 @@ public class MyFramework {
 		.setFailoverTimeout(100000).build();
 		//.setCheckpoint(true)
 		//.setPrincipal("test").build();
-		MesosSchedulerDriver driver = new MesosSchedulerDriver(schduler, info, "10.0.2.15:5050");
-		driver.run();
-		driver.stop();
+		try{
+			MesosSchedulerDriver driver = new MesosSchedulerDriver(schduler, info, "192.168.33.10:5050");
+			driver.run();
+			driver.stop();
+		}catch(Throwable e){
+			e.printStackTrace();
+		}
+		
 	}
 
 }

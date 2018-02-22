@@ -81,13 +81,13 @@ public class MySchduler implements Scheduler{
 
 	@Override
 	public void disconnected(SchedulerDriver arg0) {
-		// TODO Auto-generated method stub
+		System.out.println("Scheduler disconnected ") ;
 
 	}
 
 	@Override
 	public void error(SchedulerDriver arg0, String arg1) {
-		// TODO Auto-generated method stub
+		System.out.println("Got an error " + arg1) ;
 
 	}
 
